@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/goinggo/basicmgo/mongodb"
+	"github.com/jim3mar/basicmgo/mongo"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -41,12 +41,12 @@ var waitGroup sync.WaitGroup
 
 // main is the entry point for the application.
 func main() {
-	err := mongodb.Startup()
+	err := mongo.Startup()
 	if err != nil {
 		return
 	}
 
-	defer mongodb.Shutdown()
+	defer mongo.Shutdown()
 
 	// Perform 10 concurrent queries against the database.
 	waitGroup.Add(10)
@@ -69,7 +69,7 @@ func RunQuery(query int) {
 	// Request a socket connection from the session to process our query.
 	// Close the session when the goroutine exits and put the connection back
 	// into the pool.
-	session, err := mongodb.CopyMonotonicSession()
+	session, err := mongo.CopyMonotonicSession()
 	if err != nil {
 		return
 	}
@@ -80,11 +80,11 @@ func RunQuery(query int) {
 	f := func(collection *mgo.Collection) error {
 		queryMap := bson.M{"region": "Gulf Of Mexico"}
 
-		log.Printf("Query : db.buoy_stations.find(%s).limit(3)", mongodb.ToString(queryMap))
+		log.Printf("Query : db.buoy_stations.find(%s).limit(3)", mongo.ToString(queryMap))
 		return collection.Find(queryMap).Limit(3).All(&buoyStations)
 	}
 
-	if err := mongodb.Execute(session, "goinggo", "buoy_stations", f); err != nil {
+	if err := mongo.Execute(session, "goinggo", "buoy_stations", f); err != nil {
 		log.Println("Runquery", err)
 		return
 	}
