@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/jim3mar/basicmgo/mongo"
+	"github.com/jim3ma/basicmgo/mongo"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
